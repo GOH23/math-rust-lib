@@ -1,8 +1,8 @@
-use js_sys::Float32Array;
-use wasm_bindgen::prelude::*;
 use crate::EPS;
 use crate::quat::Quat;
 use crate::vec3::Vec3;
+use js_sys::Float32Array;
+use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 pub struct Mat4 {
     values: Vec<f32>,
@@ -279,6 +279,92 @@ impl Mat4 {
             Ok(Mat4 { values: val })
         }
     }
+    pub fn from_position_rotation(position: &Vec3, rotation: &Quat) -> Self {
+        let x = rotation.x;
+        let y = rotation.y;
+        let z = rotation.z;
+        let w = rotation.w;
+
+        let x2 = x + x;
+        let y2 = y + y;
+        let z2 = z + z;
+
+        let xx = x * x2;
+        let xy = x * y2;
+        let xz = x * z2;
+        let yy = y * y2;
+        let yz = y * z2;
+        let zz = z * z2;
+        let wx = w * x2;
+        let wy = w * y2;
+        let wz = w * z2;
+
+        Self::new([
+            1.0 - (yy + zz),
+            xy + wz,
+            xz - wy,
+            0.0,
+            xy - wz,
+            1.0 - (xx + zz),
+            yz + wx,
+            0.0,
+            xz + wy,
+            yz - wx,
+            1.0 - (xx + yy),
+            0.0,
+            position.x,
+            position.y,
+            position.z,
+            1.0,
+        ].to_vec())
+    }
+
+    pub fn from_position_rotation_to_ref(position: &Vec3, rotation: &Quat, result: &mut Mat4) {
+        let x = rotation.x;
+        let y = rotation.y;
+        let z = rotation.z;
+        let w = rotation.w;
+        let values = &mut result.values;
+
+        let x2 = x + x;
+        let y2 = y + y;
+        let z2 = z + z;
+
+        let xx = x * x2;
+        let xy = x * y2;
+        let xz = x * z2;
+        let yy = y * y2;
+        let yz = y * z2;
+        let zz = z * z2;
+        let wx = w * x2;
+        let wy = w * y2;
+        let wz = w * z2;
+
+        // Первый столбец (колонка-мажорная запись, как в GLSL/OpenGL)
+        values[0] = 1.0 - (yy + zz); // m00
+        values[1] = xy + wz; // m10
+        values[2] = xz - wy; // m20
+        values[3] = 0.0; // m30
+
+        // Второй столбец
+        values[4] = xy - wz; // m01
+        values[5] = 1.0 - (xx + zz); // m11
+        values[6] = yz + wx; // m21
+        values[7] = 0.0; // m31
+
+        // Третий столбец
+        values[8] = xz + wy; // m02
+        values[9] = yz - wx; // m12
+        values[10] = 1.0 - (xx + yy); // m22
+        values[11] = 0.0; // m32
+
+        // Четвертый столбец (позиция)
+        values[12] = position.x; // m03
+        values[13] = position.y; // m13
+        values[14] = position.z; // m23
+        values[15] = 1.0; // m33
+    }
+
     pub fn set(mut self, val: Vec<f32>) {
         self.values = val;
     }
