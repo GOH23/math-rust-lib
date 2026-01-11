@@ -2,10 +2,13 @@ use crate::{EPSILON_SQ, vec3::Vec3};
 use wasm_bindgen::prelude::*;
 pub struct SinCos {
     sin: f32,
-    cos: f32
+    cos: f32,
 }
-pub fn get_sin_cos(angle: f32)->SinCos{
-    SinCos { sin: f32::sin(angle), cos: f32::cos(angle) }
+pub fn get_sin_cos(angle: f32) -> SinCos {
+    SinCos {
+        sin: f32::sin(angle),
+        cos: f32::cos(angle),
+    }
 }
 #[wasm_bindgen]
 pub struct Quat {
@@ -277,10 +280,11 @@ impl Quat {
             z: vz + qw * tz + (qx * ty - qy * tx),
         }
     }
-    pub fn set(mut self, x: f32, y: f32, z: f32) -> Self {
+    pub fn set(mut self, x: f32, y: f32, z: f32, w: f32) -> Self {
         self.x = x;
         self.y = y;
         self.z = z;
+        self.w = w;
         return self;
     }
     pub fn clone(&self) -> Quat {
@@ -290,6 +294,9 @@ impl Quat {
             z: self.x,
             w: self.x,
         }
+    }
+    pub fn to_array(&self) -> Vec<f32> {
+        return vec![self.x, self.y, self.z, self.w];
     }
     pub fn multiply(&mut self, other: Quat) -> Self {
         let ax = self.x;
