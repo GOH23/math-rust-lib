@@ -24,24 +24,14 @@ impl Vec3 {
             z: self.z,
         }
     }
-    pub fn set(&mut self, x: f32, y: f32, z: f32) -> Vec3 {
-        self.x = x;
-        self.y = y;
-        self.z = z;
-        Vec3 {
-            x: self.x,
-            y: self.y,
-            z: self.z,
-        }
+    pub fn set(&self, x: f32, y: f32, z: f32) -> Vec3 {
+        Vec3 { x: x, y: y, z: z }
     }
-    pub fn subtract(&mut self, other: Vec3) -> Vec3 {
-        self.x -= other.x;
-        self.y -= other.y;
-        self.z -= other.z;
+    pub fn subtract(self, other: Vec3) -> Vec3 {
         Vec3 {
-            x: self.x,
-            y: self.y,
-            z: self.z,
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
         }
     }
     pub fn normalize(&mut self) -> Vec3 {

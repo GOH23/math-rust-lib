@@ -40,7 +40,7 @@ impl Quat {
             rot_y = f32::atan2(-(2.0 * x * z + 2.0 * w * y), 1.0 - 2.0 * (x * x + y * y));
             rot_z = f32::atan2(2.0 * x * y + 2.0 * w * z, 1.0 - 2.0 * (x * x + z * z));
         }
-        let mut result = Vec3::new(0.0, 0.0, 0.0);
+        let result = Vec3::new(0.0, 0.0, 0.0);
         result.set(rot_x, rot_y, rot_z);
         result
     }
